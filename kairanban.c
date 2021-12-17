@@ -26,13 +26,15 @@ typedef struct
     int ***receivedornot;    //回覧板が過去に通ったかどうか
 }receive;
 
-void search(kairanban, deliver now, deliver *prev, people peo, receive *rec)
+int number;  //移動番号(グローバル変数)
+
+void search(kairanban kairanban, deliver now, deliver *prev, people peo, receive *rec)
 {
     int youbi;
     youbi = now.when % 7;   //曜日を調べる
     
     int i, j, k, l;
-    int number; 
+
     if (peo.stayornot[now.where][youbi] == 0)   //1で家にいる、0で家にいない、なので、家にいないとき
     {
         now.when++; //日付を進める
@@ -101,9 +103,19 @@ int main(void)
     int i,j,k;
     int **stayin;
     stayin = malloc(number * sizeof(int*)); 
+    
     for (i = 0; i < number; i++) 
     {
-        stayin[i] = malloc(7 * sizeof(int));
+		stayin[i] = malloc(7 * sizeof(int));
+		for (j = 0; j < 7; j++) 
+        {
+			stayin[i][j] = 0;
+		}
+	}
+    
+    for (i = 0; i < number; i++) 
+    {
+
         for (j = 0; j < 3; j++) 
         {
             printf("%d ", house[i][j]);
@@ -113,10 +125,10 @@ int main(void)
                 {
                     stayin[i][k] = 1;
                 }
-                else
-                {
-                    stayin[i][k] = 0;
-                }
+                
+                
+                
+                
             }
         }
         printf("\n");
