@@ -132,8 +132,8 @@ int main(void)
 
     for (i = 0; i < number; i++)
     {
-        stayin[i] = malloc(7 * sizeof(int)); 
-        for (j = 0; j < 7; j++)
+        stayin[i] = malloc(7 * sizeof(int));
+        for (j = 0; j < 7; j++) 
         {
             stayin[i][j] = 0;
         }
