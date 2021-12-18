@@ -111,7 +111,7 @@ int main(void)
         }
     }
 
-    int** house;
+    int **house;
     house = malloc(number * sizeof(int*));  //縦n個分の配列
 
     int *A;
