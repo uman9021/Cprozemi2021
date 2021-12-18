@@ -28,7 +28,10 @@ typedef struct
 
 int number;  //移動番号(グローバル変数)
 
-void search(kairanban kairanban, deliver now, deliver *prev, people peo, receive *rec)
+// 最短日数を格納する変数を定義(グローバル変数)
+// int minDays = 1000;
+
+void search(kairanban kairanban, deliver now, deliver* prev, people peo, receive* rec)
 {
     int youbi;
     youbi = now.when % 7;   //曜日を調べる
@@ -51,6 +54,10 @@ void search(kairanban kairanban, deliver now, deliver *prev, people peo, receive
             {
                 if (peo.stayornot[i][youbi] == 1)   //i人目が家にいる場合
                 {
+                    // prev[movenum] = now;
+                    // now.whereを更新
+                    // rec.receivedornotに回覧板が通ったことを記録
+                    // movenumをインクリメント
                     for (j = 0; j < peo.people; j++)
                     {
                         rec[number].receiveornot[j] = rec[number - 1].receiveornot[j]; 
@@ -62,10 +69,29 @@ void search(kairanban kairanban, deliver now, deliver *prev, people peo, receive
                             }
                         }
                     }
+                    // rec.receiveornotに回覧板が届いたことを記録
+
+                    //0軒目に回覧板が戻ってきた→ゴール判定
+                    //　・・・
                 }
+                // break;
             }
         }
+        //日付を進める
     }
+
+    if//(1週間以上回覧板が動かなかった場合)
+        // 1つ前の移動に戻る
+        if //(number < 0) 
+            //深さ優先探索終了
+
+    if//(minDays以上の日数探索)
+        //1つ前の移動に戻る
+
+    if//(MaxDay日以上経過した場合)　※エスケープ処理
+        //ERROR
+
+    // Search(**);
 }
 
 int main(void)
@@ -102,18 +128,18 @@ int main(void)
     }
     int i,j,k;
     int **stayin;
-    stayin = malloc(number * sizeof(int*)); 
-    
-    for (i = 0; i < number; i++) 
+    stayin = malloc(number * sizeof(int*));
+
+    for (i = 0; i < number; i++)
     {
-		stayin[i] = malloc(7 * sizeof(int));
-		for (j = 0; j < 7; j++) 
+        stayin[i] = malloc(7 * sizeof(int));
+        for (j = 0; j < 7; j++) 
         {
-			stayin[i][j] = 0;
-		}
-	}
-    
-    for (i = 0; i < number; i++) 
+            stayin[i][j] = 0;
+        }
+    }
+
+    for (i = 0; i < number; i++)
     {
 
         for (j = 0; j < 3; j++) 
@@ -125,12 +151,29 @@ int main(void)
                 {
                     stayin[i][k] = 1;
                 }
-                
-                
-                
-                
             }
         }
         printf("\n");
     }
+
+    //deliver now, deliver *prev, people peo, receive *recを定義
+
+    //prevとreceiveのメモリを確保する
+    // prev = malloc(Max *sizeof(Kairanban));　　※※Maxは移動回数の最大値(とりあえず100ぐらいでいいかも)
+    // rec  = 
+
+    //now, prev, peo, recに初期値を入れる
+    // now.where=0;
+    // now.when=0;
+    // for (i = 0; i < Max; i++) {
+    //     prev[i].now = 0
+    //
+    
+    //Search関数を呼び出し
+    // Search(**);
+
+    //結果出力
+    // printf("%d\n", minDays);
+
+
 }
