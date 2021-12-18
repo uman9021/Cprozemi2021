@@ -8,7 +8,7 @@ typedef struct
     char person[];
 }kairanban;
 
-typedef struct
+typedef struct 
 {
     int** stayornot;    //家にいるかどうか
     int people;     //人が何人いるのか
@@ -22,8 +22,8 @@ typedef struct
 
 typedef struct
 {
-    int* receiveornot;   //回覧板が届いたのか
-    int*** receivedornot;    //回覧板が過去に通ったかどうか
+    int *receiveornot;   //回覧板が届いたのか
+    int ***receivedornot;    //回覧板が過去に通ったかどうか
 }receive;
 
 int number;  //移動番号(グローバル変数)
@@ -35,7 +35,7 @@ void search(kairanban kairanban, deliver now, deliver* prev, people peo, receive
 {
     int youbi;
     youbi = now.when % 7;   //曜日を調べる
-
+    
     int i, j, k, l;
 
     if (peo.stayornot[now.where][youbi] == 0)   //1で家にいる、0で家にいない、なので、家にいないとき
@@ -60,7 +60,7 @@ void search(kairanban kairanban, deliver now, deliver* prev, people peo, receive
                     // movenumをインクリメント
                     for (j = 0; j < peo.people; j++)
                     {
-                        rec[number].receiveornot[j] = rec[number - 1].receiveornot[j];
+                        rec[number].receiveornot[j] = rec[number - 1].receiveornot[j]; 
                         for (k = 0; k < peo.people; k++)
                         {
                             for (l = 0; l < 7; l++)
@@ -97,7 +97,7 @@ void search(kairanban kairanban, deliver now, deliver* prev, people peo, receive
 int main(void)
 {
     int number;
-    while (1)
+    while(1)
     {
         printf("N:");
         scanf("%d", &number);
@@ -114,26 +114,26 @@ int main(void)
     int** house;
     house = malloc(number * sizeof(int*));  //縦n個分の配列
 
-    int* A;
+    int *A;
     A = malloc(number * sizeof(int*));
-
+    
     for (int n = 0; n < number; n++)
     {
         printf("A[%d]の在宅日: ", n);
         scanf("%d", &A[n]);
         house[n] = malloc(3 * sizeof(int));
         house[n][2] = A[n] % 10;
-        house[n][1] = (int)((A[n] % 100) - (A[n] % 10)) / 10;
-        house[n][0] = (int)(A[n] - (A[n] % 100)) / 100;
+        house[n][1] = (int) ((A[n] % 100) - (A[n] % 10)) / 10;
+        house[n][0] = (int) (A[n] - (A[n] % 100)) / 100; 
     }
-    int i, j, k;
-    int** stayin;
+    int i,j,k;
+    int **stayin;
     stayin = malloc(number * sizeof(int*));
 
     for (i = 0; i < number; i++)
     {
         stayin[i] = malloc(7 * sizeof(int));
-        for (j = 0; j < 7; j++)
+        for (j = 0; j < 7; j++) 
         {
             stayin[i][j] = 0;
         }
@@ -142,7 +142,7 @@ int main(void)
     for (i = 0; i < number; i++)
     {
 
-        for (j = 0; j < 3; j++)
+        for (j = 0; j < 3; j++) 
         {
             printf("%d ", house[i][j]);
             for (k = 0; k < 7; k++)
