@@ -1,0 +1,183 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct 
+{
+    int** stayornot;    //家にいるかどうか
+    int people;     //人が何人いるのか
+}people;
+
+typedef struct
+{
+    int where;  //今回覧板がどこにあるか
+    int when;   //今回覧板があるまでの日数
+}deliver;
+
+typedef struct
+{
+    int *receiveornot;   //回覧板が届いたのか
+    int ***receivedornot;    //回覧板が過去に通ったかどうか
+}receive;
+
+int Num = 0;    //通し番号
+int goal = 0;   //A0まで到達したかどうか
+int minDays = 1000; //A0まで到達するのにかかる最短日数
+
+void search(deliver now, deliver *prev, people peo, receive *rec)
+{
+    int youbi;
+    youbi = now.when % 7;   //曜日を調べる
+    
+    int i, j, k, l;
+    int allpeopleclear;
+    if (peo.stayornot[now.where][youbi] == 0)   //1で家にいる，0で家にいない．よって，家にいない場合
+    {
+        now.when++; //日付を進める
+    }
+    else    //家にいるとき
+    {
+        for (i = now.where + 1; i < peo.people; i++)    //i人目に渡す場合
+        {
+            if (i == now.where) //渡す先が自分の家だった場合
+            {
+                continue;   //渡すことはない
+            }
+            else
+            {
+                if (peo.stayornot[i][youbi] == 1)   //i人目が家にいる場合
+                {
+                    if (rec[Num].receivedornot[now.where][i][youbi] == 0)   //その曜日にi人目を訪ねていない場合
+                    {
+                        prev[Num] = now;    //現在のデータを格納する
+                        now.where = i;  //i人目に回覧板を回す
+                        rec[Num].receivedornot[prev[Num].where][now.where][youbi] = 1;  //回覧板が一度通過したことを記録する．
+                        Num++;
+
+                    }
+                    for (j = 0; j < peo.people; j++)
+                    {
+                        rec[Num].receiveornot[j] = rec[Num - 1].receiveornot[j]; 
+                        for (k = 0; k < peo.people; k++)
+                        {
+                            for (l = 0; l < 7; l++)
+                            {
+                                rec[Num].receivedornot[j][k][l] = rec[Num - 1].receivedornot[j][k][l];
+                            }
+                        }
+                    }
+                    rec[Num].receiveornot[1] = 1;   //i人目を訪ねたことを記録する．
+
+                    if (now.where == 0) //A0に回覧板が戻ってきた場合
+                    {
+                        allpeopleclear = 1;
+                        for (k = 0; k < peo.people; k++)
+                        {
+                            allpeopleclear = allpeopleclear * rec[Num].receiveornot[k]; //全ての人に回覧板が回ったか
+                        }
+                        if (allpeopleclear > 0) //全ての人に回覧板が回っている場合
+                        {
+                            printf("%d日\n", now.when); //何日でA0まで戻ったのかを出力する．
+                            if (now.when < minDays) //かかった日数が最短日数よりも少ない場合
+                            {
+                                minDays = now.when; //最短日数を更新する．
+                                printf("更新した結果，%d日\n", now.when); //何日でA0まで戻ったのかを更新し出力する．
+                            }
+                            Num--;
+                            now = prev[Num];    //1つ前の番号の人に戻る．
+                            rec[Num].receivedornot[now.where][0][youbi] = 1;    //A0には行けないようにする．
+                            search(now, prev, peo, rec);    //次の番号の人のもとへと移動
+                            if (goal == 1)
+                            {
+                                return;
+                            }    
+                        }
+                        else    //全ての人に回覧板が回っていない場合
+                        {
+                            printf("ERROR: 全ての人に回覧板が回っていない．\n");
+                        }
+                    }
+                    break;
+                }
+                else    //その曜日にもうすでにi人目を訪れている場合
+                {
+                    printf("ERROR: もう既に訪問済みである．\n");
+                    continue;
+                }
+            }
+        }
+        now.when++; //1日日にちを進める
+    }
+
+    if (now.when - prev[Num - 1].when > 7)   //1週間以上同じ人のもとに回覧板がとどまり続けた場合
+    {
+        printf("ERROR: 1週間回覧板を持ち続けてはいけない．\n");
+        Num--;  //番号を戻す
+
+        if (Num == -1)  //これで探索が終わる場合
+        {
+            goal = 1;   //A0にたどりつく
+            return;
+        }
+        else
+        {
+            now = prev[Num];    //1つ前の状態に戻す
+        }
+    }      
+}
+
+int main(void)
+{
+    int number;
+    while(1)
+    {
+        printf("N:");
+        scanf("%d", &number);
+        if (3 <= number && number <= 10)
+        {
+            break;
+        }
+        else
+        {
+            printf("ERROR nは3以上10以下で入力してください．\n");
+        }
+    }
+
+    int **house;
+    house = malloc(number * sizeof(int*));  //縦n個分の配列
+
+    int *A;
+    A = malloc(number * sizeof(int*));
+    
+    for (int n = 0; n < number; n++)
+    {
+        printf("A[%d]の在宅日: ", n);
+        scanf("%d", &A[n]);
+        house[n] = malloc(3 * sizeof(int));
+        house[n][2] = A[n] % 10;
+        house[n][1] = (int) ((A[n] % 100) - (A[n] % 10)) / 10;
+        house[n][0] = (int) (A[n] - (A[n] % 100)) / 100; 
+    }
+    int i,j,k;
+    int **stayin;
+    stayin = malloc(number * sizeof(int*)); 
+    for (i = 0; i < number; i++) 
+    {
+        stayin[i] = malloc(7 * sizeof(int));
+        for (j = 0; j < 3; j++) 
+        {
+            printf("%d ", house[i][j]);
+            for (k = 0; k < 7; k++)
+            {
+                if (house[i][j] == k)
+                {
+                    stayin[i][k] = 1;
+                }
+                else
+                {
+                    stayin[i][k] = 0;
+                }
+            }
+        }
+        printf("\n");
+    }
+}
